@@ -110,14 +110,25 @@ nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: va
 .review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
 .review strong { color: var(--cp-text); }
 
-ol.series { list-style: none; padding: 0; margin: 0; }
-ol.series li { background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 12px; padding: 12px 16px; margin: 10px 0; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); }
-ol.series a { font-weight: 600; text-decoration: none; }
-ol.series a:hover { text-decoration: underline; }
-.n { display: inline-block; min-width: 2.2em; color: var(--cp-accent); font-weight: 600; }
-.hook { color: var(--cp-text-muted); font-size: .95rem; margin-top: 2px; }
-.tag { float: right; font-size: .75rem; color: var(--cp-text-soft); border: 1px solid var(--cp-border-strong); border-radius: 999px; padding: 0 8px; }
-.note { margin-top: 2rem; font-size: .9rem; color: var(--cp-text-soft); }
+main { max-width: 1280px; padding-top: 14px; padding-bottom: 28px; }
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); margin: .2rem 0 .3rem; }
+.sub { font-size: 1.02rem; max-width: 80ch; margin: 0 0 14px; }
+.pgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.card { position: relative; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); transition: transform .15s, border-color .15s, box-shadow .15s; }
+.card:hover { border-color: var(--cp-accent); transform: translateY(-2px); box-shadow: var(--cp-shadow); }
+.card:focus-within { outline: 2px solid var(--cp-accent); outline-offset: 2px; }
+.card .thumb { background: var(--cp-surface-soft); border-bottom: 1px solid var(--cp-border); height: 96px; padding: 8px; display: flex; align-items: center; justify-content: center; }
+.thumb svg { min-width: 0; width: 100%; height: 100%; }
+.card .body { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.pnum { display: flex; justify-content: space-between; align-items: center; }
+.n { color: var(--cp-accent); font-weight: 700; font-size: .85rem; }
+.card a.t { font-weight: 700; font-size: .98rem; line-height: 1.25; text-decoration: none; color: var(--cp-text); }
+.card a.t::after { content: ""; position: absolute; inset: 0; }
+.card:hover a.t { color: var(--cp-accent); }
+.hook { color: var(--cp-text-muted); font-size: .85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.tag { font-size: .7rem; color: var(--cp-text-soft); border: 1px solid var(--cp-border-strong); border-radius: 999px; padding: 0 8px; order: 2; }
+.note { margin-top: 1.2rem; font-size: .9rem; color: var(--cp-text-soft); }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
 </style>
 </head>
 <body>
@@ -126,12 +137,73 @@ ol.series a:hover { text-decoration: underline; }
 <h1>Designing an AI Gateway for Enterprises</h1>
 <p class="sub">The architecture and design thinking behind an enterprise AI gateway and its portal: the problems it has to solve, the trade-offs, and the principles I design by. Ideas you can apply to your own platform. One short post a week.</p>
 
-<ol class="series">
-  <li><span class="n">01</span><a href="01-claude-in-your-own-cloud.html">Claude is moving into your cloud. Who's minding the door?</a><div class="hook">Why enterprises moving Claude access to third-party cloud providers need a gateway and a portal.</div></li>
-  <li><span class="n">02</span><a href="02-why-a-gateway.html">Nobody can tell you who spent what</a><div class="hook">Why an AI gateway exists at all: who, how much, what went wrong. One product, two halves.</div></li>
-  <li><span class="n">03</span><a href="03-one-endpoint-many-providers.html">One endpoint for every kind of consumer</a><div class="hook">Five kinds of consumer, one endpoint, one identity, one budget.</div></li>
-  <li><span class="n">04</span><a href="04-stop-sending-config-files.html">Stop sending people a config file</a><div class="hook">Clients such as Claude Desktop discover the models they may use, filtered by who is asking.</div></li>
-</ol>
+<div class="pgrid">
+<div class="card post"><div class="thumb"><svg viewBox="0 0 640 230" aria-hidden="true" focusable="false"><defs><marker id="pt1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="75" width="170" height="70" rx="10"/><text x="95" y="105" text-anchor="middle">Per-seat</text><text x="95" y="123" text-anchor="middle">subscription</text>
+  <path class="line" d="M182 110 L262 110" marker-end="url(#pt1)"/>
+  <text class="mute" x="222" y="98" text-anchor="middle">shifts to</text>
+  <rect class="dash" x="268" y="14" width="362" height="202" rx="14"/>
+  <text class="mute" x="620" y="32" text-anchor="end">What you now run</text>
+  <rect class="hot" x="288" y="44" width="322" height="76" rx="10"/><text x="449" y="76" text-anchor="middle">Gateway + portal</text><text class="mute" x="449" y="98" text-anchor="middle">access &middot; accountability &middot; assurance</text>
+  <path class="hotline" d="M449 120 L449 146" marker-end="url(#pt1)"/>
+  <rect class="box" x="288" y="148" width="322" height="54" rx="10"/><text x="449" y="172" text-anchor="middle">Models in your own cloud</text><text class="mute" x="449" y="190" text-anchor="middle">Microsoft Foundry</text>
+</svg></div><div class="body"><div class="pnum"><span class="n">01</span></div><a class="t" href="01-claude-in-your-own-cloud.html">Claude is moving into your cloud. Who's minding the door?</a><div class="hook">Why enterprises moving Claude access to third-party cloud providers need a gateway and a portal.</div></div></div>
+<div class="card post"><div class="thumb"><svg viewBox="0 0 640 230" aria-hidden="true" focusable="false"><defs><marker id="pt2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <line class="dash" x1="320" y1="15" x2="320" y2="215"/>
+  <path class="line" d="M110 46 L210 71 M110 46 L210 129 M110 100 L210 71 M110 100 L210 129 M110 154 L210 71 M110 154 L210 129"/>
+  <rect class="box" x="20" y="30" width="90" height="32" rx="8"/><text x="65" y="51" text-anchor="middle">Client</text>
+  <rect class="box" x="20" y="84" width="90" height="32" rx="8"/><text x="65" y="105" text-anchor="middle">Client</text>
+  <rect class="box" x="20" y="138" width="90" height="32" rx="8"/><text x="65" y="159" text-anchor="middle">Client</text>
+  <rect class="box" x="210" y="55" width="90" height="32" rx="8"/><text x="255" y="76" text-anchor="middle">Model</text>
+  <rect class="box" x="210" y="113" width="90" height="32" rx="8"/><text x="255" y="134" text-anchor="middle">Model</text>
+  <text class="mute" x="160" y="208" text-anchor="middle">Everyone talks to everything</text>
+  <rect class="box" x="340" y="30" width="70" height="32" rx="8"/><text x="375" y="51" text-anchor="middle">Client</text>
+  <rect class="box" x="340" y="84" width="70" height="32" rx="8"/><text x="375" y="105" text-anchor="middle">Client</text>
+  <rect class="box" x="340" y="138" width="70" height="32" rx="8"/><text x="375" y="159" text-anchor="middle">Client</text>
+  <path class="line" d="M410 46 L452 70" marker-end="url(#pt2)"/>
+  <path class="line" d="M410 100 L452 78" marker-end="url(#pt2)"/>
+  <path class="line" d="M410 154 L452 90" marker-end="url(#pt2)"/>
+  <rect class="dash" x="440" y="20" width="100" height="170" rx="12"/>
+  <text class="mute" x="490" y="38" text-anchor="middle">One product</text>
+  <rect class="hot" x="452" y="55" width="76" height="46" rx="10"/><text x="490" y="83" text-anchor="middle">Gateway</text>
+  <rect class="box" x="452" y="125" width="76" height="46" rx="10"/><text x="490" y="153" text-anchor="middle">Portal</text>
+  <path class="dash" d="M490 101 L490 123"/>
+  <path class="hotline" d="M528 70 L573 71" marker-end="url(#pt2)"/>
+  <path class="hotline" d="M528 88 L573 129" marker-end="url(#pt2)"/>
+  <rect class="box" x="575" y="55" width="55" height="32" rx="8"/><text x="602" y="76" text-anchor="middle">Model</text>
+  <rect class="box" x="575" y="113" width="55" height="32" rx="8"/><text x="602" y="134" text-anchor="middle">Model</text>
+  <text class="mute" x="485" y="208" text-anchor="middle">One place that knows</text>
+</svg></div><div class="body"><div class="pnum"><span class="n">02</span></div><a class="t" href="02-why-a-gateway.html">Nobody can tell you who spent what</a><div class="hook">Why an AI gateway exists at all: who, how much, what went wrong. One product, two halves.</div></div></div>
+<div class="card post"><div class="thumb"><svg viewBox="0 0 640 250" aria-hidden="true" focusable="false"><defs><marker id="pt3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="15" width="190" height="34" rx="8"/><text x="105" y="37" text-anchor="middle">Claude Desktop</text>
+  <rect class="box" x="10" y="63" width="190" height="34" rx="8"/><text x="105" y="85" text-anchor="middle">Claude Code</text>
+  <rect class="box" x="10" y="111" width="190" height="34" rx="8"/><text x="105" y="133" text-anchor="middle">GitHub Copilot (VS Code)</text>
+  <rect class="box" x="10" y="159" width="190" height="34" rx="8"/><text x="105" y="181" text-anchor="middle">OpenAI Codex</text>
+  <rect class="box" x="10" y="207" width="190" height="34" rx="8"/><text x="105" y="229" text-anchor="middle">Apps with an API key</text>
+  <path class="line" d="M200 32 L248 125" marker-end="url(#pt3)"/>
+  <path class="line" d="M200 80 L248 130" marker-end="url(#pt3)"/>
+  <path class="line" d="M200 128 L248 135" marker-end="url(#pt3)"/>
+  <path class="line" d="M200 176 L248 140" marker-end="url(#pt3)"/>
+  <path class="line" d="M200 224 L248 145" marker-end="url(#pt3)"/>
+  <rect class="hot" x="250" y="95" width="140" height="80" rx="12"/><text x="320" y="130" text-anchor="middle">One endpoint</text><text class="mute" x="320" y="150" text-anchor="middle">"I'd like model X"</text>
+  <path class="hotline" d="M390 125 L448 90" marker-end="url(#pt3)"/>
+  <path class="hotline" d="M390 148 L448 160" marker-end="url(#pt3)"/>
+  <rect class="box" x="450" y="70" width="180" height="40" rx="8"/><text x="540" y="95" text-anchor="middle">Microsoft Foundry</text>
+  <rect class="box" x="450" y="140" width="180" height="40" rx="8"/><text x="540" y="165" text-anchor="middle">Other providers</text>
+</svg></div><div class="body"><div class="pnum"><span class="n">03</span></div><a class="t" href="03-one-endpoint-many-providers.html">One endpoint for every kind of consumer</a><div class="hook">Five kinds of consumer, one endpoint, one identity, one budget.</div></div></div>
+<div class="card post"><div class="thumb"><svg viewBox="0 0 640 230" aria-hidden="true" focusable="false"><defs><marker id="pt4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="82" width="130" height="56" rx="10"/><text x="75" y="107" text-anchor="middle">Claude Desktop,</text><text x="75" y="125" text-anchor="middle">or any client</text>
+  <path class="line" d="M140 110 L198 110" marker-end="url(#pt4)"/>
+  <text class="mute" x="75" y="72" text-anchor="middle">"What can I use?"</text>
+  <rect class="hot" x="200" y="70" width="150" height="80" rx="12"/><text x="275" y="104" text-anchor="middle">Gateway</text><text class="mute" x="275" y="124" text-anchor="middle">checks who is asking</text>
+  <path class="hotline" d="M350 95 L418 58" marker-end="url(#pt4)"/>
+  <path class="hotline" d="M350 125 L418 172" marker-end="url(#pt4)"/>
+  <rect class="box" x="420" y="15" width="210" height="80" rx="10"/><text x="525" y="38" text-anchor="middle">Person A sees</text>
+  <rect class="hot" x="436" y="48" width="52" height="30" rx="6"/><rect class="hot" x="496" y="48" width="52" height="30" rx="6"/><rect class="hot" x="556" y="48" width="52" height="30" rx="6"/>
+  <rect class="box" x="420" y="135" width="210" height="80" rx="10"/><text x="525" y="158" text-anchor="middle">Person B sees</text>
+  <rect class="hot" x="496" y="168" width="52" height="30" rx="6"/>
+</svg></div><div class="body"><div class="pnum"><span class="n">04</span></div><a class="t" href="04-stop-sending-config-files.html">Stop sending people a config file</a><div class="hook">Clients such as Claude Desktop discover the models they may use, filtered by who is asking.</div></div></div>
+</div>
 <p class="note">More posts are on the way, one a week.</p>
 </main>
 </body>
