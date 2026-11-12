@@ -110,31 +110,66 @@ nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: va
 .review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
 .review strong { color: var(--cp-text); }
 
-.about { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 .6rem; }
-.links { margin: 0 0 1.6rem; }
-.card { background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 12px; padding: 14px 18px; margin: 10px 0; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); }
-.card a.t { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
-.card a.t:hover { text-decoration: underline; }
-.card .hook { color: var(--cp-text-muted); font-size: .95rem; margin-top: 2px; }
-.card .meta { color: var(--cp-text-soft); font-size: .85rem; margin-top: 6px; }
+main { max-width: 1120px; padding-top: clamp(20px, 4vw, 56px); }
+.hero { padding: clamp(20px, 4vw, 44px); border-radius: 20px; border: 1px solid var(--cp-border); background: linear-gradient(135deg, var(--cp-accent-soft), var(--cp-surface) 70%); margin-bottom: clamp(20px, 3vw, 36px); }
+.hero h1 { font-size: clamp(2rem, 1.2rem + 3.6vw, 3.6rem); line-height: 1.1; margin: 0 0 .4rem; letter-spacing: -.01em; }
+.about { color: var(--cp-text-muted); font-size: clamp(1.05rem, .95rem + .6vw, 1.4rem); margin: 0 0 1.2rem; max-width: 40ch; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+.btn { display: inline-block; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--cp-accent); color: var(--cp-accent); font-weight: 600; text-decoration: none; transition: background .15s, color .15s; }
+.btn:hover, .btn:focus-visible { background: var(--cp-accent); color: var(--cp-accent-fg); }
+.sec { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cp-text-muted); margin: clamp(20px, 3vw, 36px) 0 12px; font-weight: 600; }
+.grid { display: grid; gap: clamp(14px, 2vw, 24px); grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.card { position: relative; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); transition: transform .15s, border-color .15s, box-shadow .15s; }
+.card:hover { border-color: var(--cp-accent); transform: translateY(-3px); box-shadow: var(--cp-shadow); }
+.card:focus-within { outline: 2px solid var(--cp-accent); outline-offset: 2px; }
+.card .thumb { background: var(--cp-surface-soft); border-bottom: 1px solid var(--cp-border); padding: 14px; display: flex; align-items: center; justify-content: center; min-height: 170px; }
+.thumb svg { min-width: 0; width: 100%; max-height: 190px; height: auto; }
+.thumb svg text.n { font-size: 22px; font-weight: 600; }
+.card .body { padding: 16px 20px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.card a.t { font-weight: 700; font-size: clamp(1.1rem, 1rem + .5vw, 1.35rem); line-height: 1.25; text-decoration: none; color: var(--cp-text); }
+.card a.t::after { content: ""; position: absolute; inset: 0; }
+.card:hover a.t { color: var(--cp-accent); }
+.card .hook { color: var(--cp-text-muted); font-size: .98rem; }
+.card .meta { color: var(--cp-text-soft); font-size: .85rem; margin-top: auto; padding-top: 6px; }
+.feature { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.feature.card { flex-direction: row; flex-wrap: wrap; }
+.feature .thumb { flex: 1 1 380px; border-bottom: 0; border-right: 1px solid var(--cp-border); min-height: 220px; }
+.feature .body { flex: 1 1 340px; justify-content: center; padding: clamp(18px, 3vw, 32px); }
+.feature a.t { font-size: clamp(1.3rem, 1rem + 1.4vw, 2rem); }
+.feature .hook { font-size: 1.05rem; }
 .foot { margin-top: 3rem; font-size: .85rem; color: var(--cp-text-soft); }
+@media (prefers-reduced-motion: reduce) { .card, .btn { transition: none; } .card:hover { transform: none; } }
 </style>
 </head>
 <body>
 <main>
+<header class="hero">
 <h1>Deep Amberkar</h1>
 <p class="about">Artificial Intelligence, Voice capabilities, Enterprise Architecture - Microsoft</p>
-<p class="links"><a href="https://www.linkedin.com/in/deep-amberkar-b29a201/">LinkedIn</a></p>
+<p class="links"><a class="btn" href="https://www.linkedin.com/in/deep-amberkar-b29a201/">LinkedIn</a></p>
+</header>
 
-<h2>Series</h2>
-<div class="card"><a class="t" href="ai-gateway-series/index.html">Designing an AI Gateway for Enterprises</a>
-<div class="hook">The architecture and design thinking behind an enterprise AI gateway and its portal: the problems it has to solve, the trade-offs, and the principles I design by. Ideas you can apply to your own platform. One short post a week.</div>
-<div class="meta">1 post so far &middot; a new one every week</div></div>
-
-<h2>Latest post</h2>
-<div class="card"><a class="t" href="ai-gateway-series/01-claude-in-your-own-cloud.html">Claude is moving into your cloud. Who's minding the door?</a>
+<h2 class="sec">Latest post</h2>
+<div class="card feature"><div class="thumb"><svg viewBox="0 0 640 230" aria-hidden="true" focusable="false"><defs><marker id="ml" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="75" width="170" height="70" rx="10"/><text x="95" y="105" text-anchor="middle">Per-seat</text><text x="95" y="123" text-anchor="middle">subscription</text>
+  <path class="line" d="M182 110 L262 110" marker-end="url(#ml)"/>
+  <text class="mute" x="222" y="98" text-anchor="middle">shifts to</text>
+  <rect class="dash" x="268" y="14" width="362" height="202" rx="14"/>
+  <text class="mute" x="620" y="32" text-anchor="end">What you now run</text>
+  <rect class="hot" x="288" y="44" width="322" height="76" rx="10"/><text x="449" y="76" text-anchor="middle">Gateway + portal</text><text class="mute" x="449" y="98" text-anchor="middle">access &middot; accountability &middot; assurance</text>
+  <path class="hotline" d="M449 120 L449 146" marker-end="url(#ml)"/>
+  <rect class="box" x="288" y="148" width="322" height="54" rx="10"/><text x="449" y="172" text-anchor="middle">Models in your own cloud</text><text class="mute" x="449" y="190" text-anchor="middle">Microsoft Foundry</text>
+</svg></div><div class="body">
+<a class="t" href="ai-gateway-series/01-claude-in-your-own-cloud.html">Claude is moving into your cloud. Who's minding the door?</a>
 <div class="hook">Why enterprises moving Claude access to third-party cloud providers need a gateway and a portal.</div>
-<div class="meta">Designing an AI Gateway for Enterprises &middot; Part 1 of 16</div></div>
+<div class="meta">Designing an AI Gateway for Enterprises &middot; Part 1 of 16</div></div></div>
+
+<h2 class="sec">Series</h2>
+<div class="grid">
+<div class="card"><div class="thumb"><svg viewBox="0 0 640 142" aria-hidden="true" focusable="false"><rect class="hot" x="15" y="22" width="64" height="40" rx="8"/><text class="n" x="47" y="49" text-anchor="middle">01</text><rect class="box" x="93" y="22" width="64" height="40" rx="8"/><text class="n mute" x="125" y="49" text-anchor="middle">02</text><rect class="box" x="171" y="22" width="64" height="40" rx="8"/><text class="n mute" x="203" y="49" text-anchor="middle">03</text><rect class="box" x="249" y="22" width="64" height="40" rx="8"/><text class="n mute" x="281" y="49" text-anchor="middle">04</text><rect class="box" x="327" y="22" width="64" height="40" rx="8"/><text class="n mute" x="359" y="49" text-anchor="middle">05</text><rect class="box" x="405" y="22" width="64" height="40" rx="8"/><text class="n mute" x="437" y="49" text-anchor="middle">06</text><rect class="box" x="483" y="22" width="64" height="40" rx="8"/><text class="n mute" x="515" y="49" text-anchor="middle">07</text><rect class="box" x="561" y="22" width="64" height="40" rx="8"/><text class="n mute" x="593" y="49" text-anchor="middle">08</text><rect class="box" x="15" y="78" width="64" height="40" rx="8"/><text class="n mute" x="47" y="105" text-anchor="middle">09</text><rect class="box" x="93" y="78" width="64" height="40" rx="8"/><text class="n mute" x="125" y="105" text-anchor="middle">10</text><rect class="box" x="171" y="78" width="64" height="40" rx="8"/><text class="n mute" x="203" y="105" text-anchor="middle">11</text><rect class="box" x="249" y="78" width="64" height="40" rx="8"/><text class="n mute" x="281" y="105" text-anchor="middle">12</text><rect class="box" x="327" y="78" width="64" height="40" rx="8"/><text class="n mute" x="359" y="105" text-anchor="middle">13</text><rect class="box" x="405" y="78" width="64" height="40" rx="8"/><text class="n mute" x="437" y="105" text-anchor="middle">14</text><rect class="box" x="483" y="78" width="64" height="40" rx="8"/><text class="n mute" x="515" y="105" text-anchor="middle">15</text><rect class="box" x="561" y="78" width="64" height="40" rx="8"/><text class="n mute" x="593" y="105" text-anchor="middle">16</text></svg></div><div class="body"><a class="t" href="ai-gateway-series/index.html">Designing an AI Gateway for Enterprises</a>
+<div class="hook">The architecture and design thinking behind an enterprise AI gateway and its portal: the problems it has to solve, the trade-offs, and the principles I design by. Ideas you can apply to your own platform. One short post a week.</div>
+<div class="meta">1 post so far &middot; a new one every week</div></div></div>
+</div>
 </main>
 </body>
 </html>
