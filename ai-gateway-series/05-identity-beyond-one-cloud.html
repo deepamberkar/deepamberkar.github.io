@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One gateway, many identity worlds</title>
+<meta name="description" content="Identity beyond a single vendor&#x27;s user base, through one federation layer in front of one token issuer.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One gateway, many identity worlds">
+<meta property="og:description" content="Identity beyond a single vendor&#x27;s user base, through one federation layer in front of one token issuer.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/05-identity-beyond-one-cloud.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 5 of 16</p>
+<h1>One gateway, many identity worlds</h1>
+<p class="sub">Bringing many identity sources into one AI gateway.</p>
+
+<p>Most enterprise AI gateways quietly assume one directory: the company's. Reality is messier. Employees sit in one directory, contractors in another, partners in a third, and now and then somebody has only a personal account. If your gateway speaks just one of those, you've built a gateway for one customer.</p>
+<p>I wanted a product that doesn't care where you came from.</p>
+
+<h2>One issuer, many sources</h2>
+<p>The gateway trusts exactly one thing: a single token issuer. In front of that issuer sits an <strong>identity federation layer</strong>, the part that knows how to talk to many identity sources. The gateway never learns where a person came from. It only learns who they are and what they belong to.</p>
+
+<figure>
+<svg viewBox="0 0 640 230" role="img" aria-label="Several identity sources feed an identity federation layer; the layer hands one kind of token to the gateway; the gateway and the portal decide who may do what">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="20" width="130" height="34" rx="8"/><text x="75" y="42" text-anchor="middle">Corporate directory</text>
+  <rect class="box" x="10" y="68" width="130" height="34" rx="8"/><text x="75" y="90" text-anchor="middle">Partner directory</text>
+  <rect class="box" x="10" y="116" width="130" height="34" rx="8"/><text x="75" y="138" text-anchor="middle">Another cloud</text>
+  <rect class="box" x="10" y="164" width="130" height="34" rx="8"/><text x="75" y="186" text-anchor="middle">Personal account</text>
+  <path class="line" d="M140 37 L220 95" marker-end="url(#a)"/>
+  <path class="line" d="M140 85 L220 105" marker-end="url(#a)"/>
+  <path class="line" d="M140 133 L220 115" marker-end="url(#a)"/>
+  <path class="line" d="M140 181 L220 125" marker-end="url(#a)"/>
+  <rect class="hot" x="222" y="70" width="120" height="70" rx="10"/><text x="282" y="102" text-anchor="middle">Identity</text><text x="282" y="120" text-anchor="middle">federation</text>
+  <path class="hotline" d="M342 105 L400 105" marker-end="url(#a)"/>
+  <text class="mute" x="371" y="94" text-anchor="middle">one issuer</text>
+  <rect class="hot" x="402" y="70" width="100" height="70" rx="10"/><text x="452" y="110" text-anchor="middle">Gateway</text>
+  <path class="line" d="M502 105 L540 105" marker-end="url(#a)"/>
+  <rect class="box" x="542" y="55" width="90" height="100" rx="10"/><text x="587" y="98" text-anchor="middle">Allowed?</text><text x="587" y="118" text-anchor="middle">Which</text><text x="587" y="136" text-anchor="middle">limits?</text>
+</svg>
+<figcaption>Add a new identity source without touching the gateway.</figcaption>
+</figure>
+
+<h2>Why bother</h2>
+<ul>
+  <li>A new identity source is a change in the federation layer, not a gateway change.</li>
+  <li>The gateway stays simple, because it only understands one issuer.</li>
+  <li>Identity problems have one place to be diagnosed, not one per source.</li>
+  <li>The people who use the tools aren't asked to change how they sign in. They arrive with the identity they already have.</li>
+</ul>
+
+<h2>The same identity opens both halves</h2>
+<p>Identity isn't only for the door. The same sign-in decides what a person sees in the portal: people see their own usage, administrators see everyone's. One identity, two halves of one product.</p>
+<p>That sounds obvious until you've seen the alternative, where the gateway and its dashboard each keep their own idea of who someone is and quietly disagree. The disagreement always surfaces on a Monday morning, in front of someone who controls a budget.</p>
+
+<h2>Two lessons that cost me time</h2>
+<ol>
+  <li><strong>Separate "who are you" from "what may you do."</strong> Signing in proves identity; membership decides access. Someone who signs in successfully but belongs nowhere should get a polite, clear no, not a mystery. And the reverse also holds: access should never be inferred from the fact that somebody has an account.</li>
+  <li><strong>Don't merge identities quietly.</strong> The same human arriving from two sources is two identities until someone decides otherwise. Silent merging looks helpful and ends up in the audit conversation, where "the system decided they were the same person" is not an answer anyone wants to give.</li>
+</ol>
+
+<h2>What I'd check first</h2>
+<p>If you're building something similar, start by listing the identity worlds your real users live in, not the ones your slide deck assumes. Ask who signs in with what today, who is a guest, and who has more than one account. The answers almost always include a case the first design didn't cover, and it is much cheaper to learn that before the issuer is chosen than after.</p>
+
+<h2>Why this widens the audience</h2>
+<p>A gateway tied to one vendor's directory is a gateway for that vendor's customers. A gateway that treats identity as a pluggable layer is useful to a consultancy with guests, a company after an acquisition, a partner network, or a team with a mix of everything. The model providers don't care. The finance team cares a great deal, because "who spent what" only works if "who" survives contact with real organisations.</p>
+<p>The result is a product that's useful well beyond a single cloud's user base, which is what made me want to write all this down.</p>
+
+<p class="take">The product should know who you are and what you belong to, never where you came from.</p>
+
+<p class="next">Next: the middleware that counts every token.</p>
+<nav class="pn"><a href="04-stop-sending-config-files.html"><span>&larr; Previous &middot; Part 4</span><strong>Stop sending people a config file</strong></a><a class="r" href="06-metering-relay.html"><span>Next &middot; Part 6 &rarr;</span><strong>The middleware that counts every token</strong></a></nav>
+</main>
+</body>
+</html>

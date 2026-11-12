@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The middleware that counts every token</title>
+<meta name="description" content="Honest metering when answers arrive as a stream, and a small component built to do it.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The middleware that counts every token">
+<meta property="og:description" content="Honest metering when answers arrive as a stream, and a small component built to do it.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/06-metering-relay.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 6 of 16</p>
+<h1>The middleware that counts every token</h1>
+<p class="sub">Streaming makes honest metering surprisingly hard.</p>
+
+<p>A model doesn't answer all at once. It streams its reply piece by piece, so the user sees words appear. That's lovely for the user and awkward for the accountant: the size of the answer, and therefore its cost, isn't known until the last piece arrives. By then most of the response has already left.</p>
+<p>There are two easy answers. <strong>Estimate</strong> and be roughly right most of the time, or <strong>wait</strong> until the end and make everyone wait with you. Both fail for the same reason: money is involved, and "roughly" is a poor word to use about money.</p>
+
+<h2>What I needed</h2>
+<p>I wanted an exact, money-denominated record of every request, streamed ones included, written down in a form a finance team would accept. I also wanted it to be mine to reason about, test and change. So I built it as a component of its own, which I call a <em>metering relay</em>.</p>
+<p>It's deliberately ordinary: small, narrow, one job. It's another hop in the path, and the rest of the product treats it as exactly that. A component this central should be easy to understand, easy to test and, if it ever stopped earning its place, easy to remove.</p>
+
+<h2>The idea: a witness in the middle</h2>
+<p>The relay sits between the gateway and the models. It has one job: watch what really happened, write it down, and pass the stream through untouched.</p>
+
+<figure>
+<svg viewBox="0 0 640 190" role="img" aria-label="A request flows from client through the gateway and the relay to the models; the relay writes a usage record that the portal turns into answers">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="40" width="90" height="44" rx="10"/><text x="55" y="67" text-anchor="middle">Client</text>
+  <rect class="box" x="150" y="40" width="110" height="44" rx="10"/><text x="205" y="59" text-anchor="middle">Gateway</text><text class="mute" x="205" y="75" text-anchor="middle">APIM</text>
+  <rect class="hot" x="310" y="40" width="130" height="44" rx="10"/><text x="375" y="67" text-anchor="middle">Metering relay</text>
+  <rect class="box" x="490" y="40" width="140" height="44" rx="10"/><text x="560" y="59" text-anchor="middle">Models</text><text class="mute" x="560" y="75" text-anchor="middle">Microsoft Foundry</text>
+  <path class="line" d="M100 62 L148 62" marker-end="url(#a)"/>
+  <path class="line" d="M260 62 L308 62" marker-end="url(#a)"/>
+  <path class="line" d="M440 62 L488 62" marker-end="url(#a)"/>
+  <path class="dash" d="M488 80 L442 80" marker-end="url(#a)"/>
+  <path class="dash" d="M308 80 L262 80" marker-end="url(#a)"/>
+  <path class="dash" d="M148 80 L102 80" marker-end="url(#a)"/>
+  <text class="mute" x="205" y="108" text-anchor="middle">the reply streams back, untouched</text>
+  <path class="hotline" d="M375 84 L375 130" marker-end="url(#a)"/>
+  <rect class="box" x="305" y="132" width="140" height="40" rx="10"/><text x="375" y="157" text-anchor="middle">Usage record</text>
+  <path class="hotline" d="M445 152 L498 152" marker-end="url(#a)"/>
+  <rect class="box" x="500" y="132" width="130" height="40" rx="10"/><text x="565" y="157" text-anchor="middle">Portal</text>
+</svg>
+<figcaption>The relay is a witness, not a toll booth. What it writes down is what the portal later tells.</figcaption>
+</figure>
+
+<h2>Three rules I held myself to</h2>
+<ol>
+  <li><strong>Never slow the user.</strong> A witness may watch. It may not hold the door.</li>
+  <li><strong>Be honest about what's unknown.</strong> A record that says "unknown" beats one that invents a number.</li>
+  <li><strong>One source of truth for money.</strong> Every figure that adds up money should come from the same records. Otherwise you'll spend your meetings choosing between two totals.</li>
+</ol>
+<p>None of these rules is exotic. Together they decide whether a number can be trusted, and a number that can't be trusted is worse than no number, because people act on it.</p>
+
+<h2>What it buys you</h2>
+<p>Three things a finance team asks for. The same total whichever page you open. A figure you can trace back to the requests behind it. And a clear label when an amount is a floor rather than exact, for instance when a stream was cut short before it finished.</p>
+
+<h2>Where the records go</h2>
+<p>A record nobody can read is a diary. The relay writes the truth; the portal tells it. Every figure on a usage page, a budget bar or a cost report is built from what the relay wrote down, which is why I think of the relay and the portal as two ends of one pipe. If the first end is dishonest, the second end is a beautifully designed lie.</p>
+<p>That's also why the relay had to be built with the whole product in mind. It isn't a clever trick at the edge. It's the point where the product's most important numbers are born, and everything downstream (budgets, reports, health) inherits its honesty or its faults.</p>
+
+<h2>What I'll keep to myself</h2>
+<p>How the relay actually works is the part I'll keep to myself. The shape is worth stealing, though: put one small, well-behaved witness where the truth is known, and give it exactly one job.</p>
+
+<p class="take">Meter at the point where the truth is known, not at the point where it's convenient.</p>
+
+<p class="next">Next: a product that keeps working when its control room goes offline.</p>
+<nav class="pn"><a href="05-identity-beyond-one-cloud.html"><span>&larr; Previous &middot; Part 5</span><strong>One gateway, many identity worlds</strong></a><a class="r" href="07-connected-and-disconnected.html"><span>Next &middot; Part 7 &rarr;</span><strong>A gateway that keeps working when its control room is offline</strong></a></nav>
+</main>
+</body>
+</html>

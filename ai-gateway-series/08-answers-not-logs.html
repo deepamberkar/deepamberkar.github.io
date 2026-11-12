@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your logs aren't answers</title>
+<meta name="description" content="The portal as the second half of the product: answers out, decisions back.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Your logs aren&#x27;t answers">
+<meta property="og:description" content="The portal as the second half of the product: answers out, decisions back.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/08-answers-not-logs.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 8 of 16</p>
+<h1>Your logs aren't answers</h1>
+<p class="sub">What the portal half of the product is really for.</p>
+
+<p>Logs are a record. Answers are a view. Ask a finance lead "who used the most last week?" and the honest reply from raw logs is "give me a day."</p>
+
+<h2>The portal is half the product</h2>
+<p>This is why the product has a portal at all. A gateway that enforces rules but can't explain itself is hard to trust, and a gateway you can't trust is hard to defend in a meeting. The portal is where the gateway's behaviour becomes something a person can read.</p>
+
+<h2>The questions people actually ask</h2>
+<ul>
+  <li>Who used it, and how much?</li>
+  <li>Which models are people actually choosing?</li>
+  <li>What did it cost, per person and per team?</li>
+  <li>Did it work, and how long did it take?</li>
+  <li>Who is close to their limit, and what was refused, and why?</li>
+</ul>
+<p>None of these is a line in a log. All of them can be built from log lines. The gap between those two sentences is a whole product, and it's the one most AI platforms forget to build.</p>
+
+<figure>
+<svg viewBox="0 0 640 240" role="img" aria-label="Gateway records are collected and stored in a shape designed for questions, shown as answers about people, models, cost and errors; decisions flow back to the gateway">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="70" width="100" height="50" rx="10"/><text x="60" y="89" text-anchor="middle">Gateway</text><text x="60" y="109" text-anchor="middle">records</text>
+  <rect class="box" x="150" y="70" width="90" height="50" rx="10"/><text x="195" y="100" text-anchor="middle">Collect</text>
+  <rect class="hot" x="280" y="70" width="150" height="50" rx="10"/><text x="355" y="89" text-anchor="middle">PostgreSQL,</text><text x="355" y="109" text-anchor="middle">shaped for questions</text>
+  <path class="line" d="M110 95 L148 95" marker-end="url(#a)"/>
+  <path class="line" d="M240 95 L278 95" marker-end="url(#a)"/>
+  <path class="line" d="M430 95 L468 95" marker-end="url(#a)"/>
+  <rect class="box" x="470" y="15" width="160" height="34" rx="8"/><text x="550" y="37" text-anchor="middle">People</text>
+  <rect class="box" x="470" y="58" width="160" height="34" rx="8"/><text x="550" y="80" text-anchor="middle">Models</text>
+  <rect class="box" x="470" y="101" width="160" height="34" rx="8"/><text x="550" y="123" text-anchor="middle">Cost</text>
+  <rect class="box" x="470" y="144" width="160" height="34" rx="8"/><text x="550" y="166" text-anchor="middle">Errors</text>
+  <path class="dash" d="M550 178 L550 205 L60 205 L60 122" marker-end="url(#a)"/>
+  <text class="mute" x="305" y="226" text-anchor="middle">decisions (budgets, access, prices) flow back to the gateway</text>
+</svg>
+<figcaption>Answers flow out, decisions flow back. That loop is why the two halves are one product.</figcaption>
+</figure>
+
+<h2>Three principles</h2>
+<ol>
+  <li><strong>Start from the question, not the data.</strong> Write the questions on a whiteboard before touching a query. If a record doesn't help answer one of them, ask why you're keeping it.</li>
+  <li><strong>Keep collecting separate from showing.</strong> Then you can change either without breaking the other. The records are kept in PostgreSQL, in a shape designed for the questions rather than for the convenience of whoever wrote them.</li>
+  <li><strong>Be honest about gaps.</strong> If some records are incomplete, show "unknown", not a blank and not a guess. A tidy wrong number is worse than a visible hole.</li>
+</ol>
+
+<h2>Answers flow out, decisions flow back</h2>
+<p>The portal isn't read-only. It's also where budgets, access and prices are managed, and those decisions flow back to the gateway, which applies them to the next request. That loop is the reason I stopped thinking of them as two products. Reports without controls are a rear-view mirror. Controls without reports are guesswork.</p>
+<p>It also explains who sees what. People see their own usage; administrators see everyone's. Same screens, different slices, decided by who you are, which is exactly the identity story from the earlier post doing its job one level up.</p>
+
+<h2>What's on the page</h2>
+<p>An overview for the executive with two minutes. A trend that reads by day, week or month. A map of when people actually work. A view of who is close to a limit, and a list of what was refused and why. Each one started from a question somebody asked, not from a table somebody had.</p>
+
+<h2>What makes it trustworthy</h2>
+<p>A reporting page earns trust the same way a colleague does: by being right when you check, and by saying so when it doesn't know. I'd rather ship a page with an honest "not enough data yet" than a polished one that quietly fills gaps. People forgive a missing figure. They don't forgive one that turns out to have been invented.</p>
+<p>Everything on the page should also be explainable in a sentence. If an administrator can't say where a number came from, they won't repeat it in a meeting, and a number nobody repeats isn't doing its job.</p>
+
+<h2>What a person feels</h2>
+<p>For an individual, the difference is small and enormous: they can answer "what have I used this month?" without asking anyone. For a manager, it's "which of my people is about to hit a wall?" For finance, it's one page instead of one email chain. None of them knows or cares how the records got there. They care that the answer is on one screen and that it's the same answer everyone else sees.</p>
+
+<p class="take">Design the answer first, then work backwards to the data.</p>
+
+<p class="next">Next: a new post is coming soon.</p>
+<nav class="pn"><a href="07-connected-and-disconnected.html"><span>&larr; Previous &middot; Part 7</span><strong>A gateway that keeps working when its control room is offline</strong></a><a class="r" href="index.html"><span>Next post coming soon &rarr;</span><strong>Back to the series index</strong></a></nav>
+</main>
+</body>
+</html>

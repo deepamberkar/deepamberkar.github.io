@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A gateway that keeps working when its control room is offline</title>
+<meta name="description" content="Standalone and connected modes of one product, and why the control room must never make the door fragile.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A gateway that keeps working when its control room is offline">
+<meta property="og:description" content="Standalone and connected modes of one product, and why the control room must never make the door fragile.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/07-connected-and-disconnected.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 7 of 16</p>
+<h1>A gateway that keeps working when its control room is offline</h1>
+<p class="sub">Two modes, one product, one rule: never let the manager take the system down.</p>
+
+<p>Every gateway needs settings: who gets what, what's allowed, what things cost. The question is where those settings live.</p>
+<p>Keep them <strong>with the gateway</strong> and the system is simple and robust, but every change is a chore. Keep them in the <strong>portal</strong> and changes become a few clicks, but you've added one more thing that can be down. I decided not to choose. I built both ways of working into the same product.</p>
+
+<h2>Two modes of one product</h2>
+<ul>
+  <li><strong>Standalone.</strong> The gateway runs on its own, with its own built-in settings. Nothing else is required.</li>
+  <li><strong>Connected.</strong> The gateway also works with the portal, which becomes the place where settings are managed and where answers appear.</li>
+</ul>
+<p>It's the same gateway, with the same behaviour and the same records. Connected mode adds richness, not a different personality.</p>
+
+<figure>
+<svg viewBox="0 0 640 215" role="img" aria-label="Standalone mode: the gateway uses its own settings. Connected mode: the gateway also works with the portal, but keeps its own settings as a fallback">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <line class="dash" x1="320" y1="15" x2="320" y2="190"/>
+  <text x="160" y="28" text-anchor="middle">Standalone</text>
+  <rect class="hot" x="90" y="55" width="140" height="50" rx="10"/><text x="160" y="85" text-anchor="middle">Gateway</text>
+  <rect class="box" x="90" y="140" width="140" height="40" rx="10"/><text x="160" y="165" text-anchor="middle">Built-in settings</text>
+  <path class="line" d="M160 140 L160 107" marker-end="url(#a)"/>
+  <text x="480" y="28" text-anchor="middle">Connected</text>
+  <rect class="hot" x="335" y="55" width="140" height="50" rx="10"/><text x="405" y="85" text-anchor="middle">Gateway</text>
+  <rect class="box" x="335" y="140" width="140" height="40" rx="10"/><text x="405" y="165" text-anchor="middle">Fallback settings</text>
+  <path class="line" d="M405 140 L405 107" marker-end="url(#a)"/>
+  <rect class="box" x="520" y="45" width="110" height="70" rx="10"/><text x="575" y="68" text-anchor="middle">Portal</text><text class="mute" x="575" y="85" text-anchor="middle">control room</text><text class="mute" x="575" y="102" text-anchor="middle">if reachable</text>
+  <path class="dash" d="M520 80 L477 80" marker-end="url(#a)"/>
+  <text class="mute" x="320" y="207" text-anchor="middle">same product, same behaviour</text>
+</svg>
+<figcaption>The portal makes the gateway smarter when it's there. When it isn't, the gateway carries on.</figcaption>
+</figure>
+
+<h2>The rule</h2>
+<p>The portal may make the gateway <em>smarter</em>. It must never make the gateway <em>fragile</em>.</p>
+<p>The control room runs on Azure Container Apps with a PostgreSQL database behind it. They're ordinary building blocks, which means they have ordinary bad afternoons. If the portal is unreachable, the gateway falls back to its own settings, keeps serving, and says so in its own records. Nobody gets a failed request because a settings screen was unwell.</p>
+<p>I keep returning to that sentence because it's easy to agree with and hard to honour. Every convenient feature, every shared setting, every clever dependency is a small vote for fragility, and the rule is how I vote against it.</p>
+
+<h2>Why this matters more than it sounds</h2>
+<p>The customers I care about live in three situations: a lab with no portal at all, a production system with one, and the middle-of-the-night outage where the portal is precisely the thing that's broken. A product that only works in the second situation is a demo.</p>
+<p>It also changes the conversation with a cautious buyer. "Can it run without the portal?" is a fair question from anyone who has been burned by a management layer. The honest answer is yes, and the honest follow-up is that I test it.</p>
+
+<h2>What "connected" adds</h2>
+<p>Connected mode is where the product shows its full shape. Settings are managed in one place instead of being edited on the gateway. Budgets and access are explained as well as enforced. Reports and health appear alongside the traffic. None of it is required for a request to succeed, which is precisely the point: richness is something you add to a working door, not something the door needs in order to open.</p>
+
+<h2>Three lessons</h2>
+<ul>
+  <li><strong>Test the fallback, don't assume it.</strong> A fallback that has never run is a hope.</li>
+  <li><strong>Make the fallback visible.</strong> Silent degradation is how you discover, a month later, that nobody's changes were applied.</li>
+  <li><strong>Keep behaviour identical across modes</strong> except for richness. Two modes that behave differently are really two products, and I only wanted to build one.</li>
+</ul>
+
+<h2>One product, still</h2>
+<p>This is the clearest place to see why I won't describe the gateway and the portal as two products. They're two halves with a deliberate rule about who depends on whom. The control room depends on the door, because without traffic it has nothing to tell you. The door never depends on the control room, because the door must open at three in the morning whether or not anyone is watching.</p>
+
+<p class="take">Put the control room beside the request path, never in the middle of it.</p>
+
+<p class="next">Next: why your logs aren't answers.</p>
+<nav class="pn"><a href="06-metering-relay.html"><span>&larr; Previous &middot; Part 6</span><strong>The middleware that counts every token</strong></a><a class="r" href="08-answers-not-logs.html"><span>Next &middot; Part 8 &rarr;</span><strong>Your logs aren't answers</strong></a></nav>
+</main>
+</body>
+</html>
