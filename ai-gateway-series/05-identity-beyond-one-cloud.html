@@ -109,6 +109,10 @@ nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: va
 @media (max-width: 560px) { nav.pn { flex-direction: column; } }
 .review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
 .review strong { color: var(--cp-text); }
+.fb { display: flex; align-items: center; gap: 12px; margin: 1rem 0; color: var(--cp-text-muted); }
+.fbtn { font: inherit; font-weight: 600; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--cp-accent); background: transparent; color: var(--cp-accent); cursor: pointer; transition: background .15s, color .15s; }
+.fbtn:hover, .fbtn:focus-visible { background: var(--cp-accent); color: var(--cp-accent-fg); }
+.fbtn:disabled { cursor: default; background: var(--cp-accent-soft); color: var(--cp-text); }
 </style>
 </head>
 <body>
@@ -170,9 +174,10 @@ nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: va
 <p>The result is a product that's useful well beyond a single cloud's user base, which is what made me want to write all this down.</p>
 
 <p class="take">The product should know who you are and what you belong to, never where you came from.</p>
-
+<div class="fb"><span>Was this useful?</span><button type="button" class="fbtn" data-goatcounter-click="useful-05" data-goatcounter-title="Useful: part 5" onclick="this.disabled=true;this.textContent='Thanks!'">&#128077; Useful</button></div>
 <p class="next">Next: the middleware that counts every token.</p>
 <nav class="pn"><a href="04-stop-sending-config-files.html"><span>&larr; Previous &middot; Part 4</span><strong>Stop sending people a config file</strong></a><a class="r" href="06-metering-relay.html"><span>Next &middot; Part 6 &rarr;</span><strong>The middleware that counts every token</strong></a></nav>
 </main>
+<script data-goatcounter="https://deepamberkar.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
