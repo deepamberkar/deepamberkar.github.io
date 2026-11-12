@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nobody can tell you who spent what</title>
+<meta name="description" content="Why an AI gateway exists at all: who, how much, what went wrong. One product, two halves.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nobody can tell you who spent what">
+<meta property="og:description" content="Why an AI gateway exists at all: who, how much, what went wrong. One product, two halves.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/02-why-a-gateway.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 2 of 16</p>
+<h1>Nobody can tell you who spent what</h1>
+<p class="sub">Why AI access needs a front door, and a control room beside it.</p>
+
+<p>Give a team access to a large language model and the first week goes well. In the second week somebody asks a simple question: <em>who is using this, and how much?</em></p>
+<p>Nobody knows. The keys were shared in a chat. The spend arrives on one invoice. And when a request fails, the user sees an error while you see nothing at all.</p>
+
+<h2>Three questions every AI platform eventually faces</h2>
+<ol>
+  <li><strong>Who?</strong> Which person, which team, which application.</li>
+  <li><strong>How much?</strong> In money, not just in tokens.</li>
+  <li><strong>What went wrong?</strong> Which part of the journey, and why.</li>
+</ol>
+<p>If your setup can't answer these on a Monday morning, you don't have a platform. You have a shared password.</p>
+<p>These aren't exotic questions. Each one comes from a real meeting: a finance lead who wants an invoice explained, a manager who wants to know whether a team's usage is healthy, an engineer who wants to know why their request failed. The product exists to answer all three from one place, in the language each person already uses.</p>
+
+<figure>
+<svg viewBox="0 0 640 230" role="img" aria-label="Without a front door every client talks to every model; with one product made of a gateway and a portal, all traffic passes through one place">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <line class="dash" x1="320" y1="15" x2="320" y2="215"/>
+  <path class="line" d="M110 46 L210 71 M110 46 L210 129 M110 100 L210 71 M110 100 L210 129 M110 154 L210 71 M110 154 L210 129"/>
+  <rect class="box" x="20" y="30" width="90" height="32" rx="8"/><text x="65" y="51" text-anchor="middle">Client</text>
+  <rect class="box" x="20" y="84" width="90" height="32" rx="8"/><text x="65" y="105" text-anchor="middle">Client</text>
+  <rect class="box" x="20" y="138" width="90" height="32" rx="8"/><text x="65" y="159" text-anchor="middle">Client</text>
+  <rect class="box" x="210" y="55" width="90" height="32" rx="8"/><text x="255" y="76" text-anchor="middle">Model</text>
+  <rect class="box" x="210" y="113" width="90" height="32" rx="8"/><text x="255" y="134" text-anchor="middle">Model</text>
+  <text class="mute" x="160" y="208" text-anchor="middle">Everyone talks to everything</text>
+  <rect class="box" x="340" y="30" width="70" height="32" rx="8"/><text x="375" y="51" text-anchor="middle">Client</text>
+  <rect class="box" x="340" y="84" width="70" height="32" rx="8"/><text x="375" y="105" text-anchor="middle">Client</text>
+  <rect class="box" x="340" y="138" width="70" height="32" rx="8"/><text x="375" y="159" text-anchor="middle">Client</text>
+  <path class="line" d="M410 46 L452 70" marker-end="url(#a)"/>
+  <path class="line" d="M410 100 L452 78" marker-end="url(#a)"/>
+  <path class="line" d="M410 154 L452 90" marker-end="url(#a)"/>
+  <rect class="dash" x="440" y="20" width="100" height="170" rx="12"/>
+  <text class="mute" x="490" y="38" text-anchor="middle">One product</text>
+  <rect class="hot" x="452" y="55" width="76" height="46" rx="10"/><text x="490" y="83" text-anchor="middle">Gateway</text>
+  <rect class="box" x="452" y="125" width="76" height="46" rx="10"/><text x="490" y="153" text-anchor="middle">Portal</text>
+  <path class="dash" d="M490 101 L490 123"/>
+  <path class="hotline" d="M528 70 L573 71" marker-end="url(#a)"/>
+  <path class="hotline" d="M528 88 L573 129" marker-end="url(#a)"/>
+  <rect class="box" x="575" y="55" width="55" height="32" rx="8"/><text x="602" y="76" text-anchor="middle">Model</text>
+  <rect class="box" x="575" y="113" width="55" height="32" rx="8"/><text x="602" y="134" text-anchor="middle">Model</text>
+  <text class="mute" x="485" y="208" text-anchor="middle">One place that knows</text>
+</svg>
+<figcaption>Without a front door, nobody can see the whole picture. With one, and a control room beside it, there's exactly one place that can.</figcaption>
+</figure>
+
+<h2>The front door</h2>
+<p>A gateway is a single, deliberate entry point. Every request passes through it, which makes it the one place that can know who asked, apply a rule, and write down what happened. Everything else in this series is about making that one place trustworthy.</p>
+
+<h2>One product, two halves</h2>
+<p>I didn't build a gateway and then bolt a dashboard onto it. I built one product with two halves. The <strong>gateway</strong> is the door: it decides, in the moment, whether a request goes through. The <strong>portal</strong> is the control room: it tells you what happened, lets you change the rules, and shows whether the whole thing is healthy.</p>
+<p>Neither half is much use alone. A door with no control room is a black box that happens to work. A control room with no door is a dashboard about nothing. Every post in this series is about one half, or about the join between them, and I'll keep calling it one product because that's how it behaves.</p>
+
+<h2>What it's built on</h2>
+<p>Four building blocks carry most of the weight, and I'll name them once so I don't have to again:</p>
+<ul>
+  <li><strong>Azure API Management</strong> is the door.</li>
+  <li><strong>Microsoft Foundry</strong> is where the models live.</li>
+  <li><strong>Azure Container Apps</strong> runs the control room.</li>
+  <li><strong>PostgreSQL</strong> remembers what happened.</li>
+</ul>
+<p>The real picture has more parts than that. These are the ones that matter for the story.</p>
+
+<h2>Who walks through the door</h2>
+<p>The people on the other side aren't using one tool. They're using Claude Desktop, Claude Code, GitHub Copilot in VS Code, OpenAI Codex, and applications that call the models with an API key. Same company, same budget, very different habits. A front door that suits only one of them isn't a front door, it's a side door. A later post is about serving all of them as one.</p>
+
+<h2>What a gateway is not</h2>
+<p>It isn't a proxy that forwards bytes. Forwarding is the easy part. The value is in the decisions made while the request passes through: <em>should this person be allowed, what will it cost, what do we record?</em> And it isn't a dashboard either. A dashboard describes the past. A gateway with a control room changes the next request.</p>
+
+<p class="take">If you can't name the person behind a request, you can't govern it, bill it, or help them when it breaks.</p>
+
+<p class="next">Next: one door for every kind of consumer.</p>
+<nav class="pn"><a href="01-claude-in-your-own-cloud.html"><span>&larr; Previous &middot; Part 1</span><strong>Claude is moving into your cloud. Who's minding the door?</strong></a><a class="r" href="03-one-endpoint-many-providers.html"><span>Next &middot; Part 3 &rarr;</span><strong>One endpoint for every kind of consumer</strong></a></nav>
+</main>
+</body>
+</html>

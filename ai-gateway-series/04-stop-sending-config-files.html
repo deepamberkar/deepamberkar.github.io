@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stop sending people a config file</title>
+<meta name="description" content="Clients such as Claude Desktop discover the models they may use, filtered by who is asking.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stop sending people a config file">
+<meta property="og:description" content="Clients such as Claude Desktop discover the models they may use, filtered by who is asking.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/04-stop-sending-config-files.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 4 of 16</p>
+<h1>Stop sending people a config file</h1>
+<p class="sub">Letting clients discover what they're allowed to use.</p>
+
+<p>The old way to onboard a new user was a document. Here's the endpoint. Here are the model names. Here's how to set up your client. Three weeks later the model list changes and every document in every inbox is wrong.</p>
+<p>I wanted clients to <em>ask</em>. "What can I use?" And the product answers: here are the models you can use, here's how to use them, and nothing else.</p>
+
+<figure>
+<svg viewBox="0 0 640 230" role="img" aria-label="A client asks what it can use; the gateway checks who is asking and returns a different list for each person">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="82" width="130" height="56" rx="10"/><text x="75" y="107" text-anchor="middle">Claude Desktop,</text><text x="75" y="125" text-anchor="middle">or any client</text>
+  <path class="line" d="M140 110 L198 110" marker-end="url(#a)"/>
+  <text class="mute" x="75" y="72" text-anchor="middle">"What can I use?"</text>
+  <rect class="hot" x="200" y="70" width="150" height="80" rx="12"/><text x="275" y="104" text-anchor="middle">Gateway</text><text class="mute" x="275" y="124" text-anchor="middle">checks who is asking</text>
+  <path class="hotline" d="M350 95 L418 58" marker-end="url(#a)"/>
+  <path class="hotline" d="M350 125 L418 172" marker-end="url(#a)"/>
+  <rect class="box" x="420" y="15" width="210" height="80" rx="10"/><text x="525" y="38" text-anchor="middle">Person A sees</text>
+  <rect class="hot" x="436" y="48" width="52" height="30" rx="6"/><rect class="hot" x="496" y="48" width="52" height="30" rx="6"/><rect class="hot" x="556" y="48" width="52" height="30" rx="6"/>
+  <rect class="box" x="420" y="135" width="210" height="80" rx="10"/><text x="525" y="158" text-anchor="middle">Person B sees</text>
+  <rect class="hot" x="496" y="168" width="52" height="30" rx="6"/>
+</svg>
+<figcaption>Same question, different answers, because the answer depends on who is asking.</figcaption>
+</figure>
+
+<h2>Why it matters</h2>
+<ul>
+  <li><strong>Setup becomes "point at the gateway and sign in."</strong> That's the whole onboarding.</li>
+  <li><strong>The catalogue has one owner.</strong> Change it once and every client sees the change.</li>
+  <li><strong>People don't see what they can't use.</strong> That removes a whole class of "why does this fail?" tickets.</li>
+</ul>
+
+<h2>What it replaces</h2>
+<p>Before discovery, adding a model meant a message to everyone, an updated settings file, a reminder a week later, and a steady trickle of people on last month's list wondering why the new model "doesn't exist". Multiply by every tool a person uses, and "configuration" becomes a part-time job for whoever is unlucky enough to own it.</p>
+<p>With discovery, a client such as Claude Desktop simply asks the product what's available to the person using it, and shows that. Nobody edits a file. Nobody re-sends an email. The model list is a living thing, not a document.</p>
+
+<h2>One catalogue, owned in one place</h2>
+<p>The catalogue is managed in the portal and answered by the gateway, which is the one-product idea in miniature. The portal owns what exists and who may see what. The gateway owns the moment of asking. If the two halves disagreed, a person would see a model they couldn't call, or couldn't see one they should have. Because it's one product, they can't drift apart.</p>
+
+<h2>A security note hiding in a convenience feature</h2>
+<p>A list of models you aren't allowed to use is information too. Discovery isn't just a convenience; it's another surface. Filter <em>before</em> you answer, never after. And treat a discovery request like any other request: it has an identity, it is checked, and it is recorded.</p>
+<p>Discovery also has to stay out of the way of the numbers. A client asking "what can I use?" on every start-up shouldn't count as usage, shouldn't skew a health verdict, and shouldn't cost anyone a cent. It's the kind of detail that's invisible when right and embarrassing when wrong.</p>
+
+<h2>What I'd tell you to check</h2>
+<p>If you build discovery, test it with two real people who should see different things, and confirm they do. Test a person who should see nothing, and confirm they get a clean, polite empty answer rather than an error. And test what happens when the catalogue changes while a client is open. Those three cases find most of the problems.</p>
+<p>It's a small feature with a large effect on how the whole product feels. Onboarding that takes a minute changes how people talk about a tool, and how many of them bother to try it.</p>
+
+<h2>Who it works for</h2>
+<p>Claude Desktop, and any other consumer that knows how to ask. Nobody has to hand-configure a model list again, and nobody's list drifts out of date silently. For an administrator it's the difference between maintaining a catalogue and maintaining a distribution list of everyone who has a copy of it.</p>
+
+<p class="take">The best onboarding document is no document.</p>
+
+<p class="next">Next: a new post is coming soon.</p>
+<nav class="pn"><a href="03-one-endpoint-many-providers.html"><span>&larr; Previous &middot; Part 3</span><strong>One endpoint for every kind of consumer</strong></a><a class="r" href="index.html"><span>Next post coming soon &rarr;</span><strong>Back to the series index</strong></a></nav>
+</main>
+</body>
+</html>

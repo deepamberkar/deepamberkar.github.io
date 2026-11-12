@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One endpoint for every kind of consumer</title>
+<meta name="description" content="Five kinds of consumer, one endpoint, one identity, one budget.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One endpoint for every kind of consumer">
+<meta property="og:description" content="Five kinds of consumer, one endpoint, one identity, one budget.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/03-one-endpoint-many-providers.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+</style>
+</head>
+<body>
+<main>
+<p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 3 of 16</p>
+<h1>One endpoint for every kind of consumer</h1>
+<p class="sub">Claude Desktop, Claude Code, GitHub Copilot, OpenAI Codex and your own apps, through one door.</p>
+
+<p>Models come from many places, and the tools people use to reach them come from even more. Each tool has its own conventions, its own way of being configured, and its own idea of what "connected" means. If every tool carries that knowledge, then every new model is a change on every laptop, and every credential is a secret somebody pasted into a settings file.</p>
+<p>I wanted the opposite. A tool asks for a model by name. The product works out the rest.</p>
+
+<h2>Who's calling</h2>
+<p>The consumers of this product aren't hypothetical. They are:</p>
+<ul>
+  <li><strong>Claude Desktop</strong>, for people who chat.</li>
+  <li><strong>Claude Code</strong>, for people who build in a terminal.</li>
+  <li><strong>GitHub Copilot in VS Code</strong>, for people who live in an editor.</li>
+  <li><strong>OpenAI Codex</strong>, for people who prefer that way of working.</li>
+  <li><strong>Applications</strong> that call the models with an API key issued for their product.</li>
+</ul>
+<p>Five very different habits. I won't describe how each one connects, but I will say that none of them needed a bespoke gateway.</p>
+<p>They also change. New tools appear every few months, and an existing one adds a new way to connect. A product designed around today's list would be out of date by the time it shipped, so the design question was never "which tools do we support?" but "what does a tool need to know?" The answer I wanted was: almost nothing.</p>
+
+<figure>
+<svg viewBox="0 0 640 250" role="img" aria-label="Five kinds of consumer talk to one endpoint on the gateway, which reaches models on Microsoft Foundry and on other providers">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="15" width="190" height="34" rx="8"/><text x="105" y="37" text-anchor="middle">Claude Desktop</text>
+  <rect class="box" x="10" y="63" width="190" height="34" rx="8"/><text x="105" y="85" text-anchor="middle">Claude Code</text>
+  <rect class="box" x="10" y="111" width="190" height="34" rx="8"/><text x="105" y="133" text-anchor="middle">GitHub Copilot (VS Code)</text>
+  <rect class="box" x="10" y="159" width="190" height="34" rx="8"/><text x="105" y="181" text-anchor="middle">OpenAI Codex</text>
+  <rect class="box" x="10" y="207" width="190" height="34" rx="8"/><text x="105" y="229" text-anchor="middle">Apps with an API key</text>
+  <path class="line" d="M200 32 L248 125" marker-end="url(#a)"/>
+  <path class="line" d="M200 80 L248 130" marker-end="url(#a)"/>
+  <path class="line" d="M200 128 L248 135" marker-end="url(#a)"/>
+  <path class="line" d="M200 176 L248 140" marker-end="url(#a)"/>
+  <path class="line" d="M200 224 L248 145" marker-end="url(#a)"/>
+  <rect class="hot" x="250" y="95" width="140" height="80" rx="12"/><text x="320" y="130" text-anchor="middle">One endpoint</text><text class="mute" x="320" y="150" text-anchor="middle">"I'd like model X"</text>
+  <path class="hotline" d="M390 125 L448 90" marker-end="url(#a)"/>
+  <path class="hotline" d="M390 148 L448 160" marker-end="url(#a)"/>
+  <rect class="box" x="450" y="70" width="180" height="40" rx="8"/><text x="540" y="95" text-anchor="middle">Microsoft Foundry</text>
+  <rect class="box" x="450" y="140" width="180" height="40" rx="8"/><text x="540" y="165" text-anchor="middle">Other providers</text>
+</svg>
+<figcaption>Five different habits, one door. What's behind it can change without anyone noticing.</figcaption>
+</figure>
+
+<h2>One person, many tools</h2>
+<p>A developer might start the day in Claude Code, move to Copilot in VS Code, and ask Claude Desktop a question over lunch. To the gateway that's one person. To the portal it's one budget and one history. To finance it's one line instead of three mysteries. That is the part customers react to first, because it's the thing they can't get by running five tools separately.</p>
+
+<h2>What you get</h2>
+<ul>
+  <li><strong>Add or move a model</strong> without touching a single client.</li>
+  <li><strong>Credentials stay on the server side.</strong> They never travel to a laptop.</li>
+  <li><strong>One set of rules</strong>, covering identity, limits and records, applies to every consumer and every provider alike. A route that bypasses your rules is a hole, however good its models are.</li>
+</ul>
+
+<h2>Where the models live</h2>
+<p>Most of the models are hosted on Microsoft Foundry. The door doesn't care. If a model lives somewhere else, the client still asks for it the same way, and the same rules apply. The consumer sees one catalogue, one sign-in and one bill, whatever is behind it.</p>
+
+<h2>The trap</h2>
+<p>Consumers and providers are subtly different, and "compatible" is a spectrum, not a switch. The temptation is to flatten every difference until the front door is perfectly uniform, and then to be surprised when something behaves oddly at the edges.</p>
+<p>Keep the front uniform and be honest about the differences at the back. That's where the real work lives, and it's the part I won't write about.</p>
+
+<h2>Why the names matter</h2>
+<p>I've named the consumers because they're what makes the idea concrete. "A gateway for AI tools" is abstract. "A gateway you can point Claude Code, Copilot and your own app at on the same afternoon" is something you can picture, test and argue with. It's also the question I'd ask any vendor: which of my tools work, and what changes for each?</p>
+
+<p class="take">Uniform at the front, honest about differences at the back.</p>
+
+<p class="next">Next: stop sending people a config file.</p>
+<nav class="pn"><a href="02-why-a-gateway.html"><span>&larr; Previous &middot; Part 2</span><strong>Nobody can tell you who spent what</strong></a><a class="r" href="04-stop-sending-config-files.html"><span>Next &middot; Part 4 &rarr;</span><strong>Stop sending people a config file</strong></a></nav>
+</main>
+</body>
+</html>
