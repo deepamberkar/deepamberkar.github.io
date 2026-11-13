@@ -113,6 +113,28 @@ nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: va
 .fbtn { font: inherit; font-weight: 600; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--cp-accent); background: transparent; color: var(--cp-accent); cursor: pointer; transition: background .15s, color .15s; }
 .fbtn:hover, .fbtn:focus-visible { background: var(--cp-accent); color: var(--cp-accent-fg); }
 .fbtn:disabled { cursor: default; background: var(--cp-accent-soft); color: var(--cp-text); }
+
+body { background:
+  radial-gradient(60vmax 50vmax at 6% -10%, color-mix(in srgb, var(--cp-accent) 26%, transparent), transparent 62%),
+  radial-gradient(50vmax 45vmax at 98% 8%, color-mix(in srgb, var(--cp-warning) 20%, transparent), transparent 60%),
+  radial-gradient(55vmax 50vmax at 55% 115%, color-mix(in srgb, var(--cp-link) 18%, transparent), transparent 62%),
+  var(--cp-bg); background-attachment: fixed; min-height: 100vh; }
+main { margin: 14px auto 28px; padding: 22px clamp(18px, 3vw, 40px) 40px; border-radius: 24px;
+  background: color-mix(in srgb, var(--cp-surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 10%, transparent); box-shadow: var(--cp-shadow); }
+.kicker { display: inline-block; padding: 5px 16px; border-radius: 999px;
+  background: color-mix(in srgb, var(--cp-accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--cp-accent) 30%, transparent); }
+figure, nav.pn a, .take { -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%); }
+figure { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent); box-shadow: inset 0 1px 0 var(--cp-sheen), var(--cp-shadow); }
+.take { border-radius: 0 14px 14px 0; background: color-mix(in srgb, var(--cp-accent) 12%, transparent); }
+nav.pn a { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent); border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent);
+  box-shadow: inset 0 1px 0 var(--cp-sheen); border-radius: 14px; transition: transform .2s, border-color .2s; }
+nav.pn a:hover { transform: translateY(-2px); border-color: var(--cp-accent); }
+.fbtn { background: color-mix(in srgb, var(--cp-accent) 10%, transparent); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { figure, nav.pn a { background: var(--cp-surface-soft); } }
+@media (prefers-reduced-transparency: reduce) { main, figure, nav.pn a { background: var(--cp-surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@media (prefers-reduced-motion: reduce) { nav.pn a { transition: none; } nav.pn a:hover { transform: none; } }
 </style>
 </head>
 <body>
