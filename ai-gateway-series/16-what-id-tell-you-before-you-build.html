@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What I'd tell you before you build one</title>
+<meta name="description" content="The whole product in one picture, seven opinions and a call-out.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What I&#x27;d tell you before you build one">
+<meta property="og:description" content="The whole product in one picture, seven opinions and a call-out.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/16-what-id-tell-you-before-you-build.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const root = document.documentElement;
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    let saved = null;
+    try { saved = localStorage.getItem("blog-theme"); } catch (e) {}
+    const system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    root.setAttribute("data-theme", param || (saved === "dark" || saved === "light" ? saved : system));
+    const sync = () => document.querySelectorAll(".tt").forEach((b) =>
+      b.setAttribute("aria-pressed", root.getAttribute("data-theme") === "dark"));
+    window.flipTheme = () => {
+      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("blog-theme", next); } catch (e) {}
+      sync();
+    };
+    document.addEventListener("DOMContentLoaded", sync);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+.fb { display: flex; align-items: center; gap: 12px; margin: 1rem 0; color: var(--cp-text-muted); }
+.connect { margin: -.4rem 0 1rem; font-size: .95rem; color: var(--cp-text-muted); }
+.fbtn { font: inherit; font-weight: 600; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--cp-accent); background: transparent; color: var(--cp-accent); cursor: pointer; transition: background .15s, color .15s; }
+.fbtn:hover, .fbtn:focus-visible { background: var(--cp-accent); color: var(--cp-accent-fg); }
+.fbtn:disabled { cursor: default; background: var(--cp-accent-soft); color: var(--cp-text); }
+.foot { max-width: 880px; margin: 0 auto; padding: 0 20px 24px; text-align: center; font-size: .8rem; color: var(--cp-text-soft); }
+.tt { float: right; width: 34px; height: 34px; margin: .6rem 0 0 12px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--cp-text) 22%, transparent); cursor: pointer;
+  background: color-mix(in srgb, var(--cp-surface) 60%, transparent); color: var(--cp-text); transition: color .15s, border-color .15s; }
+.tt:hover, .tt:focus-visible { color: var(--cp-accent); border-color: var(--cp-accent); }
+.tt:focus-visible { outline: 2px solid var(--cp-accent); outline-offset: 2px; }
+.tt svg { width: 18px; height: 18px; min-width: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tt .sun { display: none; }
+html[data-theme="dark"] .tt .sun { display: block; }
+html[data-theme="dark"] .tt .moon { display: none; }
+.top .tt { float: none; margin: 0 0 0 auto; }
+.tt ~ .kicker { max-width: calc(100% - 48px); }
+
+
+body { background:
+  radial-gradient(60vmax 50vmax at 6% -10%, color-mix(in srgb, var(--cp-accent) 26%, transparent), transparent 62%),
+  radial-gradient(50vmax 45vmax at 98% 8%, color-mix(in srgb, var(--cp-warning) 20%, transparent), transparent 60%),
+  radial-gradient(55vmax 50vmax at 55% 115%, color-mix(in srgb, var(--cp-link) 18%, transparent), transparent 62%),
+  var(--cp-bg); background-attachment: fixed; min-height: 100vh; }
+main { margin: 14px auto 28px; padding: 22px clamp(18px, 3vw, 40px) 40px; border-radius: 24px;
+  background: color-mix(in srgb, var(--cp-surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 10%, transparent); box-shadow: var(--cp-shadow); }
+.kicker { display: inline-block; padding: 5px 16px; border-radius: 999px;
+  background: color-mix(in srgb, var(--cp-accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--cp-accent) 30%, transparent); }
+figure, nav.pn a, .take { -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%); }
+figure { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent); box-shadow: inset 0 1px 0 var(--cp-sheen), var(--cp-shadow); }
+.take { border-radius: 0 14px 14px 0; background: color-mix(in srgb, var(--cp-accent) 12%, transparent); }
+nav.pn a { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent); border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent);
+  box-shadow: inset 0 1px 0 var(--cp-sheen); border-radius: 14px; transition: transform .2s, border-color .2s; }
+nav.pn a:hover { transform: translateY(-2px); border-color: var(--cp-accent); }
+.fbtn { background: color-mix(in srgb, var(--cp-accent) 10%, transparent); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { figure, nav.pn a { background: var(--cp-surface-soft); } }
+@media (prefers-reduced-transparency: reduce) { main, figure, nav.pn a { background: var(--cp-surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@media (prefers-reduced-motion: reduce) { nav.pn a { transition: none; } nav.pn a:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+<button type="button" class="tt" onclick="flipTheme()" aria-label="Dark theme" aria-pressed="false" title="Switch between light and dark"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 16 of 17</p>
+<h1>What I'd tell you before you build one</h1>
+<p class="sub">Seven opinions, held strongly, open to argument.</p>
+
+<p>Fifteen posts in, here's the whole picture in one place, and the short list of things I'd say to anyone about to start. It is one product: a gateway that decides, and a portal that explains, sitting on a handful of building blocks.</p>
+
+<figure>
+<svg viewBox="0 0 640 320" role="img" aria-label="The whole product in plain words: five kinds of consumer, one product containing identity, a gateway, a metering relay, models and a portal with reports, budgets and health">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <rect class="box" x="10" y="40" width="170" height="32" rx="8"/><text x="95" y="61" text-anchor="middle">Claude Desktop</text>
+  <rect class="box" x="10" y="86" width="170" height="32" rx="8"/><text x="95" y="107" text-anchor="middle">Claude Code</text>
+  <rect class="box" x="10" y="132" width="170" height="32" rx="8"/><text x="95" y="153" text-anchor="middle">GitHub Copilot (VS Code)</text>
+  <rect class="box" x="10" y="178" width="170" height="32" rx="8"/><text x="95" y="199" text-anchor="middle">OpenAI Codex</text>
+  <rect class="box" x="10" y="224" width="170" height="32" rx="8"/><text x="95" y="245" text-anchor="middle">Apps with an API key</text>
+  <path class="line" d="M180 56 L213 128" marker-end="url(#a)"/>
+  <path class="line" d="M180 102 L213 133" marker-end="url(#a)"/>
+  <path class="line" d="M180 148 L213 138" marker-end="url(#a)"/>
+  <path class="line" d="M180 194 L213 143" marker-end="url(#a)"/>
+  <path class="line" d="M180 240 L213 148" marker-end="url(#a)"/>
+  <rect class="dash" x="195" y="10" width="435" height="300" rx="14"/>
+  <text class="mute" x="615" y="28" text-anchor="end">One product</text>
+  <rect class="box" x="215" y="40" width="100" height="34" rx="8"/><text x="265" y="62" text-anchor="middle">Identity</text>
+  <path class="dash" d="M265 74 L265 108" marker-end="url(#a)"/>
+  <rect class="hot" x="215" y="110" width="115" height="56" rx="10"/><text x="272" y="134" text-anchor="middle">Gateway</text><text class="mute" x="272" y="152" text-anchor="middle">APIM</text>
+  <path class="hotline" d="M330 138 L353 138" marker-end="url(#a)"/>
+  <rect class="hot" x="355" y="110" width="100" height="56" rx="10"/><text x="405" y="134" text-anchor="middle">Metering</text><text x="405" y="152" text-anchor="middle">relay</text>
+  <path class="hotline" d="M455 138 L483 138" marker-end="url(#a)"/>
+  <rect class="box" x="485" y="110" width="130" height="56" rx="10"/><text x="550" y="134" text-anchor="middle">Models</text><text class="mute" x="550" y="152" text-anchor="middle">Microsoft Foundry</text>
+  <path class="hotline" d="M405 166 L405 223" marker-end="url(#a)"/>
+  <text class="mute" x="415" y="200">records</text>
+  <path class="dash" d="M250 223 L250 168" marker-end="url(#a)"/>
+  <text class="mute" x="258" y="200">decisions</text>
+  <rect class="hot" x="215" y="225" width="250" height="70" rx="10"/><text x="340" y="247" text-anchor="middle">Portal</text><text class="mute" x="340" y="265" text-anchor="middle">reports &middot; budgets &middot; health</text><text class="mute" x="340" y="283" text-anchor="middle">Azure Container Apps &middot; PostgreSQL</text>
+</svg>
+<figcaption>One product. Detail intentionally left out: the real picture has more parts than this.</figcaption>
+</figure>
+
+<h2>The building blocks</h2>
+<p>Four pieces carry most of the weight:</p>
+<ul>
+  <li><strong>Azure API Management</strong> is the door.</li>
+  <li><strong>Microsoft Foundry</strong> is where the models live.</li>
+  <li><strong>Azure Container Apps</strong> runs the portal.</li>
+  <li><strong>PostgreSQL</strong> remembers what happened.</li>
+</ul>
+<p>The real architecture has more parts than the four above and more than the picture shows. I've left those out on purpose. They matter to the build, not to the argument.</p>
+
+<h2>The seven</h2>
+<ol>
+  <li><strong>Start with the three questions.</strong> Who spent what, how much, what went wrong. Everything else follows.</li>
+  <li><strong>Keep the front door boring and the rules in one place.</strong> Every exception is a future incident. Serve every consumer through the same door, whether it's a desktop chat client, a terminal agent, an editor or your own application.</li>
+  <li><strong>Build the door and its control room as one product.</strong> But never let the control room be able to take the door down.</li>
+  <li><strong>Treat identity as its own product.</strong> Separate who someone is from what they may do, and don't merge people quietly.</li>
+  <li><strong>Design the answer before the log.</strong> If nobody can say what question a record answers, don't keep it.</li>
+  <li><strong>Test the real path after every change.</strong> "Succeeded" is not "works".</li>
+  <li><strong>Write down every workaround, with its exit.</strong> Mine is small, has one job, and has its exit written down.</li>
+</ol>
+
+<h2>What I'd do again</h2>
+<p>Name the three questions on day one. Put money, not tokens, at the centre of every number. Insist that the gateway and its portal share one idea of a request, a person and a model, so that a figure means the same thing wherever it appears. And measure at the point where the truth is known.</p>
+
+<h2>What I'd do differently</h2>
+<p>I'd write the exit note for every workaround on the day I wrote the workaround. I'd test the fallbacks earlier and more often. And I'd draw the whole picture sooner, because the moment you can see it on one page, you start noticing which parts you were treating as separate products by accident.</p>
+
+<h2>Why one product matters</h2>
+<p>The thread through the whole series is the join between the two halves. The relay writes records that the portal reads. The portal sets budgets that the gateway applies. Identity decides what both show. Health watches the whole path. Take any one of those links away and the rest still work, but the product stops being able to explain itself. That's the difference between a gateway and a gateway you can trust.</p>
+<p>If you only remember one thing from the series, make it this: the door and the control room are one product. Build them, test them and describe them that way.</p>
+
+<h2>Now it's your turn</h2>
+<p>Which of these do you disagree with? Which have I missed? If you've built something similar, I'd like to hear what you did differently, and why. I'm especially curious about the places where you drew the line differently: what you chose to record, where you put the exit for a workaround, how you handled identity for people outside your own directory.</p>
+
+<p class="take">Tell me which one you'd argue with first.</p>
+<div class="fb"><span>Was this useful?</span><button type="button" class="fbtn" data-goatcounter-click="useful-16" data-goatcounter-title="Useful: part 16" onclick="this.disabled=true;this.textContent='Thanks!'">&#128077; Useful</button></div>
+<p class="connect">Want to discuss this? <a href="https://www.linkedin.com/in/deep-amberkar-b29a201/">Connect with me on LinkedIn</a>.</p>
+<p class="next">Next: what this series didn't cover.</p>
+<nav class="pn"><a href="15-what-an-ai-gateway-really-costs.html"><span>&larr; Previous &middot; Part 15</span><strong>What an AI gateway really costs</strong></a><a class="r" href="17-what-this-series-didnt-cover.html"><span>Next &middot; Part 17 &rarr;</span><strong>What this series didn't cover</strong></a></nav>
+</main>
+<footer class="foot">© 2026 Deep Amberkar. Views are my own and do not represent my employer.</footer>
+<script data-goatcounter="https://deepamberkar.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

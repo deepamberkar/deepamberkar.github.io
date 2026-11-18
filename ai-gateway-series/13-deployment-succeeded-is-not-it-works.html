@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>"Deployment succeeded" is not "it works"</title>
+<meta name="description" content="Four rules for proving a change works, applied to a product with two halves.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&quot;Deployment succeeded&quot; is not &quot;it works&quot;">
+<meta property="og:description" content="Four rules for proving a change works, applied to a product with two halves.">
+<meta property="og:url" content="https://deepamberkar.github.io/ai-gateway-series/13-deployment-succeeded-is-not-it-works.html">
+<meta name="twitter:card" content="summary">
+<script>
+  (() => {
+    const root = document.documentElement;
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    let saved = null;
+    try { saved = localStorage.getItem("blog-theme"); } catch (e) {}
+    const system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    root.setAttribute("data-theme", param || (saved === "dark" || saved === "light" ? saved : system));
+    const sync = () => document.querySelectorAll(".tt").forEach((b) =>
+      b.setAttribute("aria-pressed", root.getAttribute("data-theme") === "dark"));
+    window.flipTheme = () => {
+      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("blog-theme", next); } catch (e) {}
+      sync();
+    };
+    document.addEventListener("DOMContentLoaded", sync);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 18px/1.6 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 28px 20px 56px; }
+a { color: var(--cp-link); }
+.kicker { color: var(--cp-accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .8rem; }
+.kicker a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kicker a:hover { text-decoration: underline solid; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: .3rem 0 .5rem; }
+.sub { color: var(--cp-text-muted); font-size: 1.15rem; margin: 0 0 1.5rem; }
+h2 { font-size: 1.25rem; margin: 1.6rem 0 .3rem; }
+p { margin: .6rem 0; }
+ul, ol { padding-left: 1.3rem; }
+li { margin: .35rem 0; }
+figure { margin: 1.4rem auto; max-width: 720px; padding: 16px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; box-shadow: 0 0 2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.14); overflow-x: auto; }
+figcaption { color: var(--cp-text-muted); font-size: .9rem; margin-top: 8px; }
+svg { width: 100%; min-width: 560px; height: auto; display: block; }
+svg text { fill: var(--cp-text); font-size: 14px; font-family: inherit; }
+svg .mute { fill: var(--cp-text-muted); font-size: 12px; }
+svg .box { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 1.2; }
+svg .hot { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 1.6; }
+svg .line { stroke: var(--cp-border-strong); stroke-width: 1.5; fill: none; }
+svg .dash { stroke: var(--cp-border-strong); stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+svg .hotline { stroke: var(--cp-accent); stroke-width: 2; fill: none; }
+svg .arrow { fill: var(--cp-border-strong); }
+svg .ok { fill: var(--cp-success); }
+svg .warn { fill: var(--cp-warning); }
+svg .bad { fill: var(--cp-danger); }
+.take { border-left: 4px solid var(--cp-accent); background: var(--cp-accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.6rem 0; font-weight: 600; }
+.next { color: var(--cp-text-muted); border-top: 1px solid var(--cp-border); padding-top: 16px; margin-top: 2rem; }
+nav.pn { display: flex; gap: 12px; margin-top: 1.2rem; }
+nav.pn a { flex: 1; display: block; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: var(--cp-text); }
+nav.pn a:hover { border-color: var(--cp-accent); }
+nav.pn a.r { text-align: right; }
+nav.pn a span { display: block; font-size: .8rem; color: var(--cp-text-muted); }
+nav.pn a strong { display: block; font-size: .95rem; line-height: 1.3; color: var(--cp-link); }
+@media (max-width: 560px) { nav.pn { flex-direction: column; } }
+.review { border: 1px dashed var(--cp-warning); background: var(--cp-surface); border-radius: 10px; padding: 12px 16px; margin-top: 2.5rem; font-size: .9rem; color: var(--cp-text-soft); }
+.review strong { color: var(--cp-text); }
+.fb { display: flex; align-items: center; gap: 12px; margin: 1rem 0; color: var(--cp-text-muted); }
+.connect { margin: -.4rem 0 1rem; font-size: .95rem; color: var(--cp-text-muted); }
+.fbtn { font: inherit; font-weight: 600; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--cp-accent); background: transparent; color: var(--cp-accent); cursor: pointer; transition: background .15s, color .15s; }
+.fbtn:hover, .fbtn:focus-visible { background: var(--cp-accent); color: var(--cp-accent-fg); }
+.fbtn:disabled { cursor: default; background: var(--cp-accent-soft); color: var(--cp-text); }
+.foot { max-width: 880px; margin: 0 auto; padding: 0 20px 24px; text-align: center; font-size: .8rem; color: var(--cp-text-soft); }
+.tt { float: right; width: 34px; height: 34px; margin: .6rem 0 0 12px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--cp-text) 22%, transparent); cursor: pointer;
+  background: color-mix(in srgb, var(--cp-surface) 60%, transparent); color: var(--cp-text); transition: color .15s, border-color .15s; }
+.tt:hover, .tt:focus-visible { color: var(--cp-accent); border-color: var(--cp-accent); }
+.tt:focus-visible { outline: 2px solid var(--cp-accent); outline-offset: 2px; }
+.tt svg { width: 18px; height: 18px; min-width: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tt .sun { display: none; }
+html[data-theme="dark"] .tt .sun { display: block; }
+html[data-theme="dark"] .tt .moon { display: none; }
+.top .tt { float: none; margin: 0 0 0 auto; }
+.tt ~ .kicker { max-width: calc(100% - 48px); }
+
+
+body { background:
+  radial-gradient(60vmax 50vmax at 6% -10%, color-mix(in srgb, var(--cp-accent) 26%, transparent), transparent 62%),
+  radial-gradient(50vmax 45vmax at 98% 8%, color-mix(in srgb, var(--cp-warning) 20%, transparent), transparent 60%),
+  radial-gradient(55vmax 50vmax at 55% 115%, color-mix(in srgb, var(--cp-link) 18%, transparent), transparent 62%),
+  var(--cp-bg); background-attachment: fixed; min-height: 100vh; }
+main { margin: 14px auto 28px; padding: 22px clamp(18px, 3vw, 40px) 40px; border-radius: 24px;
+  background: color-mix(in srgb, var(--cp-surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 10%, transparent); box-shadow: var(--cp-shadow); }
+.kicker { display: inline-block; padding: 5px 16px; border-radius: 999px;
+  background: color-mix(in srgb, var(--cp-accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--cp-accent) 30%, transparent); }
+figure, nav.pn a, .take { -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%); }
+figure { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent); box-shadow: inset 0 1px 0 var(--cp-sheen), var(--cp-shadow); }
+.take { border-radius: 0 14px 14px 0; background: color-mix(in srgb, var(--cp-accent) 12%, transparent); }
+nav.pn a { background: color-mix(in srgb, var(--cp-surface-soft) 70%, transparent); border: 1px solid color-mix(in srgb, var(--cp-text) 12%, transparent);
+  box-shadow: inset 0 1px 0 var(--cp-sheen); border-radius: 14px; transition: transform .2s, border-color .2s; }
+nav.pn a:hover { transform: translateY(-2px); border-color: var(--cp-accent); }
+.fbtn { background: color-mix(in srgb, var(--cp-accent) 10%, transparent); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { figure, nav.pn a { background: var(--cp-surface-soft); } }
+@media (prefers-reduced-transparency: reduce) { main, figure, nav.pn a { background: var(--cp-surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+@media (prefers-reduced-motion: reduce) { nav.pn a { transition: none; } nav.pn a:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+<button type="button" class="tt" onclick="flipTheme()" aria-label="Dark theme" aria-pressed="false" title="Switch between light and dark"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><p class="kicker"><a href="../index.html" title="Home">Home</a> &middot; <a href="index.html" title="Back to the series index">Designing an AI Gateway for Enterprises</a> &middot; Part 13 of 17</p>
+<h1>"Deployment succeeded" is not "it works"</h1>
+<p class="sub">Accepted, valid and working are three different things.</p>
+
+<p>Any control plane will take your configuration, check that it's well formed and tell you "succeeded". That's a statement about the paperwork, not about the system. Sometimes you find that out at the first real user request.</p>
+<p>I hit this often enough to turn it into rules. With two halves to release, a gateway and a portal, the cost of being wrong was twice as large, and the temptation to trust a green tick twice as strong.</p>
+
+<figure>
+<svg viewBox="0 0 640 170" role="img" aria-label="A timeline: configuration accepted, deployment reports success, then the first real request fails, which is where you find out">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker></defs>
+  <path class="line" d="M95 70 L213 70" marker-end="url(#a)"/>
+  <path class="line" d="M255 70 L373 70" marker-end="url(#a)"/>
+  <path class="line" d="M415 70 L466 70" marker-end="url(#a)"/>
+  <circle class="ok" cx="75" cy="70" r="20"/><text x="75" y="76" text-anchor="middle" style="fill: var(--cp-accent-fg)">&#10003;</text>
+  <circle class="ok" cx="235" cy="70" r="20"/><text x="235" y="76" text-anchor="middle" style="fill: var(--cp-accent-fg)">&#10003;</text>
+  <circle class="bad" cx="395" cy="70" r="20"/><text x="395" y="76" text-anchor="middle" style="fill: var(--cp-accent-fg)">&#10007;</text>
+  <text x="75" y="115" text-anchor="middle">Config</text><text class="mute" x="75" y="133" text-anchor="middle">accepted</text>
+  <text x="235" y="115" text-anchor="middle">Deployment</text><text class="mute" x="235" y="133" text-anchor="middle">"succeeded"</text>
+  <text x="395" y="115" text-anchor="middle">First real</text><text class="mute" x="395" y="133" text-anchor="middle">request</text>
+  <rect class="hot" x="470" y="40" width="160" height="60" rx="10"/><text x="550" y="65" text-anchor="middle">Where you</text><text x="550" y="84" text-anchor="middle">find out</text>
+</svg>
+<figcaption>Two green ticks and one red cross. Only the last one counts.</figcaption>
+</figure>
+
+<h2>Four rules</h2>
+<ol>
+  <li><strong>Validate before you deploy.</strong> Ask the tooling's own validator what it thinks, and do it as a separate step ahead of the real deployment, where a failure costs seconds instead of minutes.</li>
+  <li><strong>After every change, send one real request.</strong> Not a health check. A real request, through the real path, as a real caller would send it.</li>
+  <li><strong>Make the check falsifiable.</strong> A check that can't fail proves nothing. Send something unique and see it come back. If you can't tell the difference between "it worked" and "nothing happened", you haven't tested anything.</li>
+  <li><strong>Green means accepted.</strong> Write it on the wall. "Accepted" and "working" are different words.</li>
+</ol>
+
+<h2>One entry point</h2>
+<p>Both halves go out through one entry point, and I treat them as one release. A portal that deploys cleanly into a gateway that's quietly misconfigured is a nicely lit room with the door bricked up. The checks follow the same logic. After a change, send a real request through the door, load a real page in the control room, and confirm that the two agree about what just happened.</p>
+<p>That last step catches a surprising amount. If the request appears in the portal with the right person, the right model and a sensible cost, a whole chain of things is working at once: identity, routing, metering, storage and reporting. If it doesn't, you know the chain is broken and roughly where.</p>
+
+<h2>Why valid isn't the same as working</h2>
+<p>A system can usually check that your configuration is well formed, not that it does what you meant. The difference between those two is exactly where deployments go wrong. A setting can be perfectly valid and perfectly useless. A rule can be accepted and silently never run. Only a real request tells you which you have.</p>
+
+<h2>A habit, not a procedure</h2>
+<p>The rules only work if they become habits. The first week, sending a real request after a change feels like overhead. By the third week, not doing it feels reckless. I keep the check small on purpose, a single request and a single look at the result, because a heavy ritual gets skipped on exactly the day you're in a hurry, which is also the day you most need it.</p>
+<p>I also keep the evidence. The request I sent, the answer that came back and where it appeared in the portal go into the record of the change. Six months later, when someone asks whether a change was ever tested, the answer is a fact, not a memory.</p>
+
+<h2>The cost</h2>
+<p>A few minutes per change. The benefit is that you learn about a broken configuration before your users do, which is a better week for everyone. It also changes habits. Once "it deployed" stops counting as an answer, people start asking better questions in reviews: what did you send, what came back, and how would you have known if it hadn't worked?</p>
+
+<p class="take">"Succeeded" means the paperwork was accepted. It doesn't mean the system works.</p>
+<div class="fb"><span>Was this useful?</span><button type="button" class="fbtn" data-goatcounter-click="useful-13" data-goatcounter-title="Useful: part 13" onclick="this.disabled=true;this.textContent='Thanks!'">&#128077; Useful</button></div>
+<p class="connect">Want to discuss this? <a href="https://www.linkedin.com/in/deep-amberkar-b29a201/">Connect with me on LinkedIn</a>.</p>
+<p class="next">Next: keeping the glue thin.</p>
+<nav class="pn"><a href="12-watching-the-whole-path.html"><span>&larr; Previous &middot; Part 12</span><strong>Health isn't a ping: watching a request across the whole path</strong></a><a class="r" href="14-glue-should-be-thin.html"><span>Next &middot; Part 14 &rarr;</span><strong>Keep the glue thin, and write down how to remove it</strong></a></nav>
+</main>
+<footer class="foot">© 2026 Deep Amberkar. Views are my own and do not represent my employer.</footer>
+<script data-goatcounter="https://deepamberkar.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
